@@ -1,0 +1,108 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CVE Record</title>
+    <style>
+        td, th {
+            border: 1px solid #1f1f1f;
+            padding: 8px;
+            text-align: center;
+        }
+        thead {
+            background-color:white; 
+            color: black; 
+        }
+        table {
+            font-size: small;
+            font-family: Arial, Helvetica, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+        h1, h2, h3, h4, p {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        p {
+            font-size: small;
+        }
+        .vector-table th, .vector-table td {
+            border-bottom: 1px solid #1f1f1f;
+            border-right: 1px solid #1f1f1f;
+            padding: 8px;
+            text-align: center;
+        }
+        .vector-table th {
+            border-top: 1px solid #1f1f1f;
+            background-color: white; 
+            color: white; 
+        }
+    </style>
+</head>
+<body>
+    <%if (locals.data) { %>
+    <h1><%= data.id %></h1>
+
+    <h3>Description:</h3>
+    <p><%= data.description%></p>
+
+    <h3>CVSS V2 Metrics:</h3>
+    <p>
+        <b>Severity: </b> <%= data.severity%> &emsp; <b>Score: </b><%= data.score%>
+    </p>
+    <p><b>Vector String &nbsp; &nbsp; </b> <%= data.vectorString%></p>
+
+    <table id="Metrics">
+        <thead>
+            <tr>
+                <th>Access Vector</th>
+                <th>Access Complexity</th>
+                <th>Authentication</th>
+                <th>Confidentiality Impact</th>
+                <th>Integrity Impact</th>
+                <th>Availability Impact</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><%= data.accessVector %></td>
+                <td><%= data.accessComplexity %></td>
+                <td><%= data.authentication %></td>
+                <td><%= data.confidentialityImpact %></td>
+                <td><%= data.integrityImpact %></td>
+                <td><%= data.availabilityImpact %></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>Scores:</h3>
+    <p><b>Exploitability Score: </b> <%= data.exploitabilityScore%></p>
+    <p><b>Impact Score: </b> <%= data.impactScore%></p>
+
+    <h3>CPE:</h3>
+
+    <table id="cpeTable">
+        <thead>
+            <tr>
+                <th>Criteria</th>
+                <th>Match Criteria ID</th>
+                <th>Vulnerable</th>
+            </tr>
+        </thead>
+        <tbody>
+            <%if ("cpe" in locals.data) { data.cpe.forEach(c => { %>
+            <% let vulnerable = "No"; %>
+            <% if (c.vulnerable) { vulnerable = "Yes";} %>
+            <tr>
+                <td><%= c.criteria %></td>
+                <td><%= c.matchCriteriaId %></td>
+                <td><%= vulnerable %></td>
+            </tr>
+            <% })}%>
+        </tbody>
+    </table>
+
+    <% } %>
+</body>
+</html>

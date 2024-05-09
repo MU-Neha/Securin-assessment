@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      td,
+      th {
+        border: 1 solid #1f1f1f;
+        padding: 8px;
+      }
+      thead {
+        background-color: #333;
+        color: white;
+      }
+      h1, h2, h3, h4 {
+        font-family: Arial, Helvetica, sans-serif
+      }
+    </style>
+  </head>
+  <body>
+    <h1 style="font-size: x-large">
+      Welcome to CVE Database Application!
+    </h1>
+
+    <%if (locals.data) { %>
+        
+        <% if ("count" in data) { %>
+          <h4> We currently have <%= locals.data["count"] %> records in our database. </h4>
+        <% } %>
+
+        <% if ("totalRec" in data) { %>
+          <h4> There are <%= locals.data["totalRec"] %> records in central database. </h4>
+        <% } %>
+
+        <% if ("remainingRec" in data) { %>
+          <h4> We still need to load <%= locals.data["remainingRec"] %> more records from central database. </h4>
+        <% } %>
+
+        <form action="/loadData" id="form" class="form" method="POST">
+          <input type="hidden" name="startIndex" value=0>
+          <button type="submit" class="form-submit">CLEAN ALL DATA</button>
+        </form>
+
+        <form action="/loadData" id="form" class="form" method="POST">
+          <input type="hidden" name="startIndex" value=-1>
+          <button type="submit" class="form-submit">LOAD MORE DATA</button>
+        </form>
+
+    <% } %>
+    
+    
+
+  </body>
+
+  <h2> For browsing the records, please visit <a href=http://localhost:3000/cves/list>http://localhost:3000/cves/list</a></h2>
+</html>

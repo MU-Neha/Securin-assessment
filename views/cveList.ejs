@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CVE List</title>
+    <style>
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      th,
+      td {
+        border: 1px solid #000;
+        padding: 8px;
+      }
+
+      thead {
+        background-color: white;
+        color: black;
+      }
+      .pagination {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+      }
+
+      .pagination select,
+      .pagination span {
+        padding: 5px 10px;
+        border: 1px solid #000;
+        border-radius: 5px;
+      }
+
+      .pagination a {
+        padding: 5px 10px;
+        border: 1px solid #000;
+        border-radius: 5px;
+        cursor: pointer;
+        text-decoration: none;
+      }
+    .pagination-left {
+      margin-right: auto;
+    }
+
+    .pagination-right {
+      display: flex;
+      align-items: center;
+    }
+
+    .heading {
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h1 class="heading">CVE LIST</h1>
+  <% if (locals.data) { %> 
+  <% let totalRecords = data.totalRecords; %>     
+  <% let startIndex = data.startIndex; %> 
+  <% let recordsPerPage = data.recordsPerPage; %>
+  <% let totalPages = Math.ceil( totalRecords / recordsPerPage); %>
+  <% let currentPageNumber = Math.floor(startIndex/recordsPerPage)+1; %>
+  
+  <p>Total Records: <%= totalRecords %></p>
+  <div class="pagination">
+  <span class="pagination-left" id="cve-id">
+    <form action="/cves/list" method="POST">
+        <input type="text" name="filterCveId" value="CVE ID to filter for"/>
+        <input type="hidden" name="startIndex" value="0"/>
+        <input type="hidden" name="recordsPerPage" value="<%= recordsPerPage%>"/>
+        <button type="submit" class="form-submit">FILTER</button>
+    </form>
+    <form action="/cves/list" method="POST">
+        <input type="text" name="filterCveYear" value="Year to filter for"/>
+        <input type="hidden" name="startIndex" value="0"/>
+        <input type="hidden" name="recordsPerPage" value="<%= recordsPerPage%>"/>
+        <button type="submit" class="form-submit">FILTER</button>
+    </form>
+</span>
+</div>
+
+ 
+  <table id="cveTable">
+    <thead>
+      <tr>
+        <th>CVE ID</th>
+        <th>IDENTIFIER</th>
+        <th>PUBLISHED DATE</th>
+        <th>LAST MODIFIED DATE</th>
+        <th>STATUS</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% data.cves.forEach(c => { %>
+      <tr onclick="redirectToCVEPage('<%= c.id %>')">
+        <td><%= c.id %></td>
+        <td><%= c.sourceIdentifier %></td>
+        <% let published = (new Date(c.published)).toDateString(); %> <% let
+        modified = (new Date(c.modified)).toDateString(); %>
+        <td>
+          <%= published.slice(8, 11) + published.slice(4, 8) +
+          published.slice(11, 15) %>
+        </td>
+        <td>
+          <%= modified.slice(8, 11) + modified.slice(4, 8) +
+          modified.slice(11, 15) %>
+        </td>
+        <td><%= c.status %></td>
+      </tr>
+      <% }) %>
+    </tbody>
+  </table>
+  <div class="pagination">
+    <span class="pagination-left">
+      Results per page:
+      <form method="POST" action="/cves/list">
+        <select id="recordsPerPage" name="recordsPerPage" required>
+          <option value="10">Select</option>
+          <option value="10">10</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+        </select>
+        <input type="hidden" name="startIndex" value="<%=startIndex%>" /> 
+        <input type="submit" value="Submit" />
+      </form>
+    </span>
+
+    <span class="pagination-right" id="pageNumber">
+      <% if (currentPageNumber>1) { %> 
+          <form action="/cves/list" method="POST">
+              <input type="hidden" name="startIndex" value="<%= startIndex - recordsPerPage%>"/>
+              <input type="hidden" name="recordsPerPage" value="<%= recordsPerPage%>"/>
+              <button type="submit" class="form-submit">&lt;</button>
+          </form>
+      <% } %>
+      <label for="html"><%=currentPageNumber%></label>
+      <% if (currentPageNumber<totalPages) { %> 
+          <form action="/cves/list" method="POST">
+              <input type="hidden" name="startIndex" value="<%= startIndex + recordsPerPage%>"/>
+              <input type="hidden" name="recordsPerPage" value="<%= recordsPerPage%>"/>
+              <button type="submit" class="form-submit">&gt;</button>
+          </form>
+      <% } %>
+    </span>
+  </div>
+
+    
+    <% } %>
+
+    <script>
+      function redirectToCVEPage(cveId) {
+        window.location.href = "http://localhost:3000/cves/" + cveId;
+      }
+    </script>
+  </body>
+</html>
